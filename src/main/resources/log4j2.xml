@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--设置log4j2的自身log级别为warn -->
+<configuration status="info">
+	<properties>
+
+		<Property name="app_name">elasticsearch</Property>
+		<Property name="log_path">logs/${app_name}</Property>
+
+	</properties>
+	<appenders>
+		<console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d][%t][%p][%l] %m%n"/>
+		</console>
+
+		<RollingFile name="RollingFileInfo" fileName="${log_path}/info.log"
+					 filePattern="${log_path}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log.gz">
+			<Filters>
+				<ThresholdFilter level="debug"/>
+				<ThresholdFilter level="WARN" onMatch="DENY"
+								 onMismatch="NEUTRAL"/>
+			</Filters>
+			<PatternLayout pattern="[%d][%t][%p][%c:%L] %m%n"/>
+			<Policies>
+				<!-- 归档每天的文件 -->
+				<TimeBasedTriggeringPolicy interval="1"
+										   modulate="true"/>
+				<!-- 限制单个文件大小 -->
+				<SizeBasedTriggeringPolicy size="1024 MB"/>
+			</Policies>
+			<!-- 限制每天文件个数 -->
+			<!--<DefaultRolloverStrategy compressionLevel="0" max="10" />-->
+			<!-- 最多备份30天以内的日志，此处为策略限制，Delete中可以按自己需要用正则表达式编写 -->
+			<DefaultRolloverStrategy>
+				<Delete basePath="${log_path}" maxDepth="2">
+					<IfFileName glob="*/*.log.gz"/>
+					<IfLastModified age="30d"/>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<RollingFile name="RollingFileWarn" fileName="${log_path}/warn.log"
+					 filePattern="${log_path}/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log.gz">
+			<Filters>
+				<ThresholdFilter level="WARN"/>
+				<ThresholdFilter level="ERROR" onMatch="DENY"
+								 onMismatch="NEUTRAL"/>
+			</Filters>
+			<PatternLayout pattern="[%d][%t][%p][%c:%L] %m%n"/>
+			<Policies>
+				<!-- 归档每天的文件 -->
+				<TimeBasedTriggeringPolicy interval="1"
+										   modulate="true"/>
+				<!-- 限制单个文件大小 -->
+				<SizeBasedTriggeringPolicy size="1024 MB"/>
+			</Policies>
+			<!-- 限制每天文件个数 -->
+			<!--<DefaultRolloverStrategy compressionLevel="0" max="10" />-->
+			<!-- 最多备份30天以内的日志，此处为策略限制，Delete中可以按自己需要用正则表达式编写 -->
+			<DefaultRolloverStrategy>
+				<Delete basePath="${log_path}" maxDepth="2">
+					<IfFileName glob="*/*.log.gz"/>
+					<IfLastModified age="30d"/>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<RollingFile name="RollingFileError" fileName="${log_path}/error.log"
+					 filePattern="${log_path}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log.gz">
+			<ThresholdFilter level="ERROR"/>
+			<PatternLayout pattern="[%d][%t][%p][%c:%L] %m%n"/>
+			<Policies>
+				<!-- 归档每天的文件 -->
+				<TimeBasedTriggeringPolicy interval="1"
+										   modulate="true"/>
+				<!-- 限制单个文件大小 -->
+				<SizeBasedTriggeringPolicy size="1024 MB"/>
+			</Policies>
+			<!-- 限制每天文件个数 -->
+			<!--<DefaultRolloverStrategy compressionLevel="0" max="10" />-->
+			<!-- 最多备份30天以内的日志，此处为策略限制，Delete中可以按自己需要用正则表达式编写 -->
+			<DefaultRolloverStrategy>
+				<Delete basePath="${log_path}" maxDepth="2">
+					<IfFileName glob="*/*.log.gz"/>
+					<IfLastModified age="30d"/>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+		<RollingFile name="RollingFileSql" fileName="${log_path}/sql.log"
+					 filePattern="${log_path}/$${date:yyyy-MM}/sql-%d{yyyy-MM-dd}-%i.log.gz">
+			<Filters>
+				<ThresholdFilter level="debug"/>
+				<ThresholdFilter level="WARN" onMatch="DENY"
+								 onMismatch="NEUTRAL"/>
+			</Filters>
+			<PatternLayout pattern="[%d][%t][%p][%c:%L] %m%n"/>
+			<Policies>
+				<!-- 归档每天的文件 -->
+				<TimeBasedTriggeringPolicy interval="1"
+										   modulate="true"/>
+				<!-- 限制单个文件大小 -->
+				<SizeBasedTriggeringPolicy size="1024 MB"/>
+			</Policies>
+			<!-- 限制每天文件个数 -->
+			<!--<DefaultRolloverStrategy compressionLevel="0" max="10" />-->
+			<!-- 最多备份30天以内的日志，此处为策略限制，Delete中可以按自己需要用正则表达式编写 -->
+			<DefaultRolloverStrategy>
+				<Delete basePath="${log_path}" maxDepth="2">
+					<IfFileName glob="*/*.log.gz"/>
+					<IfLastModified age="30d"/>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<!-- <Gelf name="logstash-gelf" port="5678" host="tcp:192.168.10.224" version="1.1" extractStackTrace="true"
+			  ignoreExceptions="true"
+			  filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192">
+			<Field name="timestamp" pattern="%d{yyyy-MM-dd HH:mm:ss,SSS}"/>
+			<Field name="level" pattern="%level"/>
+			<Field name="logger" pattern="%logger"/>
+			<Field name="simpleClassName" pattern="%C{1}"/>
+			<Field name="className" pattern="%C"/>
+			<Field name="server" pattern="%host"/>
+			<Field name="message" pattern="%message"/>
+			<Field name="threadName" pattern="%t"/>
+			<Field name="methodName" pattern="%l"/>
+			<Field name="serverName" literal="order" />
+		</Gelf> -->
+	</appenders>
+
+	<loggers>
+		<root level="info">
+			<appender-ref ref="Console"/>
+			<appender-ref ref="logstash-gelf"/>
+			<appender-ref ref="RollingFileInfo"/>
+			<appender-ref ref="RollingFileWarn"/>
+			<appender-ref ref="RollingFileError"/>
+		</root>
+		<Logger name="com.cictec.network.bus.timer.dao" level="debug" additivity="true">
+			<!-- <appender-ref ref="Console"/>
+			<appender-ref ref="RollingFileInfo"/> -->
+			<!--<appender-ref ref="RollingFileSql"/>-->
+		</Logger>
+	</loggers>
+
+</configuration>
